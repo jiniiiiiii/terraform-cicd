@@ -1,0 +1,16 @@
+name: 1. 가장 기초적인 테스트
+
+# 작동 조건
+# - 내 컴퓨터에서 dev로 git push 할 때마다 작동
+on:
+    push:
+        branches: ["dev"]
+
+# 수행할 jobs
+jobs:
+    say-hello: # 이름은 내가 지정
+        runs-on: ubuntu-latest # 깃허브가 빌려주는 최신 리눅스 1대를 부팅함
+
+    steps:
+        - name: 1단계
+          run: echo "Hellooooooooooooooo!!"
