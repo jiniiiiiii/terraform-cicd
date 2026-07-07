@@ -11,6 +11,6 @@ jobs:
     say-hello: # 이름은 내가 지정
         runs-on: ubuntu-latest # 깃허브가 빌려주는 최신 리눅스 1대를 부팅함
 
-    steps:
-        - name: 1단계
-          run: echo "Hellooooooooooooooo!!"
+        steps:
+            - name: 1단계
+              run: echo "Hellooooooooooooooo!!" && echo "test"
