@@ -4,7 +4,7 @@ on:
     push:
         branches: ["dev"]
         paths: #특정 경로명이 올라왔을 때만 동작
-            - "web/**"
+            - "frontend/**"
 
 jobs:
     deploy-frontend:
