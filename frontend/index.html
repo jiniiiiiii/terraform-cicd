@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3-Tier User Portal</title>
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 100%);
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --primary-glow: rgba(99, 102, 241, 0.3);
+            --danger: #f43f5e;
+            --success: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --input-bg: rgba(15, 23, 42, 0.6);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* Container & Card Base */
+        .app-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            perspective: 1000px;
+        }
+
+        .auth-card {
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+
+        /* Views (Sign in, Sign up, User Dashboard, Admin Dashboard) */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Typography */
+        h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--input-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px var(--primary-glow);
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, #7174ff 0%, #5a52ff 100%);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            margin-top: 15px;
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--text-muted);
+            box-shadow: none;
+            transform: translateY(-1px);
+        }
+
+        /* Toggle link */
+        .toggle-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        .toggle-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-link:hover {
+            color: #818cf8;
+            text-decoration: underline;
+        }
+
+        /* Messages */
+        .message-box {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+            line-height: 1.4;
+        }
+
+        .message-box.error {
+            display: block;
+            background: rgba(244, 63, 94, 0.15);
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: #fda4af;
+        }
+
+        .message-box.success {
+            display: block;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #a7f3d0;
+        }
+
+        /* Dashboard specific styles */
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+            margin-bottom: 25px;
+        }
+
+        .user-badge {
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .admin-badge {
+            background: rgba(244, 63, 94, 0.15);
+            color: #fca5a5;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(244, 63, 94, 0.3);
+        }
+
+        .logout-btn {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: #fca5a5;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--danger);
+            color: white;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.3);
+        }
+
+        /* Info Card */
+        .info-card {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Tables */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--glass-border);
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 14px 18px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--text-main);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+
+        <!-- 1. 로그인 창 -->
+        <div id="login-view" class="view auth-card card active">
+            <h2>로그인</h2>
+            <p class="subtitle">서비스를 이용하려면 로그인이 필요합니다.</p>
+            
+            <div id="login-message" class="message-box"></div>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">이메일 주소</label>
+                    <input type="email" id="login-email" required placeholder="example@mail.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">비밀번호</label>
+                    <input type="password" id="login-password" required placeholder="최소 6자리 이상">
+                </div>
+                <button type="submit" class="btn" id="login-btn">
+                    로그인
+                </button>
+            </form>
+            
+            <div class="toggle-text">
+                계정이 없으신가요? <span class="toggle-link" onclick="switchView('signup-view')">회원가입</span>
+            </div>
+        </div>
+
+        <!-- 2. 회원가입 창 -->
+        <div id="signup-view" class="view auth-card card">
+            <h2>회원가입</h2>
+            <p class="subtitle">새로운 계정을 생성하세요.</p>
+            
+            <div id="signup-message" class="message-box"></div>
+            
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-email">이메일 주소</label>
+                    <input type="email" id="signup-email" required placeholder="example@mail.com">
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">비밀번호</label>
+                    <input type="password" id="signup-password" required placeholder="최소 6자리 이상">
+                </div>
+                <button type="submit" class="btn" id="signup-btn">
+                    가입하기
+                </button>
+            </form>
+            
+            <div class="toggle-text">
+                이미 가입하셨나요? <span class="toggle-link" onclick="switchView('login-view')">로그인</span>
+            </div>
+        </div>
+
+        <!-- 3. 일반 사용자 창 (A창) -->
+        <div id="user-view" class="view card">
+            <div class="dashboard-header">
+                <div>
+                    <h2>회원 프로필</h2>
+                    <p class="subtitle" style="margin-bottom: 0;">로그인 정보 및 계정 개요</p>
+                </div>
+                <span class="user-badge" id="user-role-badge">일반 회원</span>
+            </div>
+            
+            <div class="info-card">
+                <div class="info-row">
+                    <span class="info-label">이메일 주소</span>
+                    <span class="info-value" id="user-email-val">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">가입 날짜</span>
+                    <span class="info-value" id="user-created-val">-</span>
+                </div>
+            </div>
+            
+            <button class="logout-btn" onclick="logout()" style="width: 100%; margin-top: 10px;">로그아웃</button>
+        </div>
+
+        <!-- 4. 관리자 창 (B창) -->
+        <div id="admin-view" class="view card" style="max-width: 100%;">
+            <div class="dashboard-header">
+                <div>
+                    <h2>관리자 콘솔</h2>
+                    <p class="subtitle" style="margin-bottom: 0;">전체 가입자 정보를 관리합니다.</p>
+                </div>
+                <span class="admin-badge">시스템 관리자</span>
+            </div>
+            
+            <div id="admin-message" class="message-box"></div>
+            
+            <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--text-muted);">
+                가입된 회원 목록
+            </h3>
+            
+            <div class="table-container">
+                <table id="members-table">
+                    <thead>
+                        <tr>
+                            <th>이메일 주소</th>
+                            <th>가입 날짜</th>
+                            <th>최근 로그인 날짜</th>
+                        </tr>
+                    </thead>
+                    <tbody id="members-list">
+                        <!-- Loaded dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <button class="logout-btn" onclick="logout()" style="float: right; margin-top: 20px;">로그아웃</button>
+            <div style="clear: both;"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // API Base URL - empty string routes requests to local domain (ideal for reverse proxies and ALB setup)
+        const API_BASE = "";
+
+        // Check if user session already exists in localStorage
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = getSession();
+            if (session) {
+                restoreSession(session);
+            }
+        });
+
+        function getSession() {
+            try {
+                const s = localStorage.getItem('user_session');
+                return s ? JSON.parse(s) : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setSession(session) {
+            localStorage.setItem('user_session', JSON.stringify(session));
+        }
+
+        function clearSession() {
+            localStorage.removeItem('user_session');
+        }
+
+        function switchView(viewId) {
+            // Hide all views
+            const views = document.querySelectorAll('.view');
+            views.forEach(v => v.classList.remove('active'));
+            
+            // Show target view
+            const target = document.getElementById(viewId);
+            if (target) {
+                target.classList.add('active');
+            }
+        }
+
+        function showMessage(elementId, text, type) {
+            const box = document.getElementById(elementId);
+            box.innerText = text;
+            box.className = 'message-box ' + type;
+        }
+
+        function clearMessage(elementId) {
+            const box = document.getElementById(elementId);
+            box.className = 'message-box';
+            box.innerText = '';
+        }
+
+        function setButtonLoading(buttonId, isLoading) {
+            const btn = document.getElementById(buttonId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.dataset.originalText = btn.innerHTML;
+                btn.innerHTML = `<span class="spinner"></span>처리 중...`;
+            } else {
+                btn.disabled = false;
+                if (btn.dataset.originalText) {
+                    btn.innerHTML = btn.dataset.originalText;
+                }
+            }
+        }
+
+        // SIGN UP HANDLER
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage('signup-message');
+
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if (password.length < 6) {
+                showMessage('signup-message', '비밀번호는 최소 6자리 이상이어야 합니다.', 'error');
+                return;
+            }
+
+            setButtonLoading('signup-btn', true);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showMessage('signup-message', '회원가입이 완료되었습니다! 로그인해 주세요.', 'success');
+                    document.getElementById('signup-form').reset();
+                    setTimeout(() => {
+                        switchView('login-view');
+                        clearMessage('signup-message');
+                    }, 1500);
+                } else {
+                    showMessage('signup-message', data.error || '회원가입 실패', 'error');
+                }
+            } catch (err) {
+                showMessage('signup-message', '네트워크 연결 오류가 발생했습니다.', 'error');
+            } finally {
+                setButtonLoading('signup-btn', false);
+            }
+        });
+
+        // LOGIN HANDLER
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearMessage('login-message');
+
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (password.length < 6) {
+                showMessage('login-message', '비밀번호는 최소 6자리 이상이어야 합니다.', 'error');
+                return;
+            }
+
+            setButtonLoading('login-btn', true);
+
+            try {
+                const response = await fetch(`${API_BASE}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setSession(data);
+                    restoreSession(data);
+                    document.getElementById('login-form').reset();
+                } else {
+                    showMessage('login-message', data.error || '로그인 실패', 'error');
+                }
+            } catch (err) {
+                showMessage('login-message', '네트워크 연결 오류가 발생했습니다.', 'error');
+            } finally {
+                setButtonLoading('login-btn', false);
+            }
+        });
+
+        // RESTORE SESSION (Routing on success)
+        async function restoreSession(session) {
+            if (session.role === 'admin') {
+                switchView('admin-view');
+                await loadMembers(session);
+            } else {
+                switchView('user-view');
+                await loadMemberProfile(session);
+            }
+        }
+
+        // LOAD MEMBER PROFILE (User View)
+        async function loadMemberProfile(session) {
+            document.getElementById('user-email-val').innerText = session.email;
+            document.getElementById('user-created-val').innerText = session.created_at || '-';
+            
+            // Re-fetch from DB to get the latest info
+            try {
+                const response = await fetch(`${API_BASE}/api/member`, {
+                    method: 'GET',
+                    headers: {
+                        'X-User-Email': session.email,
+                        'X-User-Role': session.role
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('user-email-val').innerText = data.email;
+                    document.getElementById('user-created-val').innerText = data.created_at || '-';
+                }
+            } catch (e) {
+                console.error("Failed to load profile details", e);
+            }
+        }
+
+        // LOAD MEMBERS LIST (Admin View)
+        async function loadMembers(session) {
+            const listEl = document.getElementById('members-list');
+            listEl.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">불러오는 중...</td></tr>`;
+            clearMessage('admin-message');
+
+            try {
+                const response = await fetch(`${API_BASE}/api/members`, {
+                    method: 'GET',
+                    headers: {
+                        'X-User-Email': session.email,
+                        'X-User-Role': session.role
+                    }
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    listEl.innerHTML = '';
+                    if (data.members && data.members.length > 0) {
+                        data.members.forEach(member => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td style="font-weight: 500;">${escapeHtml(member.email)}</td>
+                                <td style="color: var(--text-muted);">${member.created_at}</td>
+                                <td style="color: var(--text-muted);">${member.last_login_at || '기록 없음'}</td>
+                            `;
+                            listEl.appendChild(tr);
+                        });
+                    } else {
+                        listEl.innerHTML = `<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">회원이 없습니다.</td></tr>`;
+                    }
+                } else {
+                    showMessage('admin-message', data.error || '회원 목록 불러오기 실패', 'error');
+                }
+            } catch (err) {
+                showMessage('admin-message', '목록을 불러오는 중 네트워크 오류가 발생했습니다.', 'error');
+            }
+        }
+
+        // LOGOUT HANDLER
+        function logout() {
+            clearSession();
+            switchView('login-view');
+            clearMessage('login-message');
+        }
+
+        function escapeHtml(str) {
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
