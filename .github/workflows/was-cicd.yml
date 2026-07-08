@@ -1,4 +1,4 @@
-name: web-cicd
+name: was-cicd
 
 on:
   push:
