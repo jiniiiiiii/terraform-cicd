@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
     <style>
         :root {
             --bg-gradient: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #0f172a 100%);
-            --primary: #6366f1;
+            --primary: #6399f1;
             --primary-hover: #4f46e5;
             --primary-glow: rgba(99, 102, 241, 0.3);
             --danger: #f43f5e;
@@ -79,6 +80,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -358,10 +360,13 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
 
     <div class="app-container">
@@ -370,9 +375,9 @@
         <div id="login-view" class="view auth-card card active">
             <h2>로그인</h2>
             <p class="subtitle">서비스를 이용하려면 로그인이 필요합니다.</p>
-            
+
             <div id="login-message" class="message-box"></div>
-            
+
             <form id="login-form">
                 <div class="form-group">
                     <label for="login-email">이메일 주소</label>
@@ -386,7 +391,7 @@
                     로그인
                 </button>
             </form>
-            
+
             <div class="toggle-text">
                 계정이 없으신가요? <span class="toggle-link" onclick="switchView('signup-view')">회원가입</span>
             </div>
@@ -396,9 +401,9 @@
         <div id="signup-view" class="view auth-card card">
             <h2>회원가입</h2>
             <p class="subtitle">새로운 계정을 생성하세요.</p>
-            
+
             <div id="signup-message" class="message-box"></div>
-            
+
             <form id="signup-form">
                 <div class="form-group">
                     <label for="signup-email">이메일 주소</label>
@@ -412,7 +417,7 @@
                     가입하기
                 </button>
             </form>
-            
+
             <div class="toggle-text">
                 이미 가입하셨나요? <span class="toggle-link" onclick="switchView('login-view')">로그인</span>
             </div>
@@ -427,7 +432,7 @@
                 </div>
                 <span class="user-badge" id="user-role-badge">일반 회원</span>
             </div>
-            
+
             <div class="info-card">
                 <div class="info-row">
                     <span class="info-label">이메일 주소</span>
@@ -438,7 +443,7 @@
                     <span class="info-value" id="user-created-val">-</span>
                 </div>
             </div>
-            
+
             <button class="logout-btn" onclick="logout()" style="width: 100%; margin-top: 10px;">로그아웃</button>
         </div>
 
@@ -451,13 +456,13 @@
                 </div>
                 <span class="admin-badge">시스템 관리자</span>
             </div>
-            
+
             <div id="admin-message" class="message-box"></div>
-            
+
             <h3 style="font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--text-muted);">
                 가입된 회원 목록
             </h3>
-            
+
             <div class="table-container">
                 <table id="members-table">
                     <thead>
@@ -472,7 +477,7 @@
                     </tbody>
                 </table>
             </div>
-            
+
             <button class="logout-btn" onclick="logout()" style="float: right; margin-top: 20px;">로그아웃</button>
             <div style="clear: both;"></div>
         </div>
@@ -512,7 +517,7 @@
             // Hide all views
             const views = document.querySelectorAll('.view');
             views.forEach(v => v.classList.remove('active'));
-            
+
             // Show target view
             const target = document.getElementById(viewId);
             if (target) {
@@ -640,7 +645,7 @@
         async function loadMemberProfile(session) {
             document.getElementById('user-email-val').innerText = session.email;
             document.getElementById('user-created-val').innerText = session.created_at || '-';
-            
+
             // Re-fetch from DB to get the latest info
             try {
                 const response = await fetch(`${API_BASE}/api/member`, {
@@ -717,4 +722,5 @@
         }
     </script>
 </body>
+
 </html>
