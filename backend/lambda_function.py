@@ -4,7 +4,7 @@ import sqlite3
 import hashlib
 from datetime import datetime
 
-# 26.07.09 재업로두 2 
+# 26.07.09 재업로두 3
 # Global flag to track connection type
 IS_SQLITE = True
 
