@@ -43,5 +43,5 @@ jobs:
         # 처음에 | 써주면 여러줄 쓰기 가능
         run: |
           echo "@@@ 4. s3 배포를 시작합니다..... "
-          aws s3 cp ../lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
+          aws s3 sync ../lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
           echo "@@@ 4. s3 배포를 마쳤습니다!! "
