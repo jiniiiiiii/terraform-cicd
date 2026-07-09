@@ -29,9 +29,16 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-3 # 사용 중인 리전
 
-      - name: 3. s3버킷으로 웹 소스 동기화
+      - name: 3. 파일 압축(zip)
+        run: |
+          echo "@@ 3. 업로드된 source 압축 수행 합니다..... "
+          cd ./backend
+          zip -r ../lambda_function.zip .
+          echo "@@ 3. 업로드된 source 압축 완료! "
+
+      - name: 4. s3버킷으로 웹 소스 동기화
         # 처음에 | 써주면 여러줄 쓰기 가능
         run: |
-          echo "@@@ 3. s3 배포를 시작합니다. "
-          aws s3 sync ./backend s3://aws-saa-qbank.was-cicd  --delete
+          echo "@@@ 4. s3 배포를 시작합니다..... "
+          aws s3 sync ./lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
           echo "@@@ 4. s3 배포를 마쳤습니다!! "
