@@ -31,6 +31,9 @@ jobs:
 
       - name: 3. 파일 압축(zip)
         run: |
+          echo "@@ 3. 기존에 있을 수도 있는 찌꺼기 파일을 삭제합니다...... "
+          rm -rf ../lambda_function.zip ./lambda_function.zip
+
           echo "@@ 3. 업로드된 source 압축 수행 합니다..... "
           cd ./backend
           zip -r ../lambda_function.zip .
@@ -45,5 +48,5 @@ jobs:
           echo "@@@ 4. s3 배포를 시작합니다..... "
           echo "현재 작업 디렉토리" && pwd
           echo "파일 목록 : " && ls 
-          aws s3 sync lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
+          aws s3 sync ./lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
           #echo "@@@ 4. s3 배포를 마쳤습니다!! "
