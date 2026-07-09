@@ -8,7 +8,7 @@ on:
       - "backend/**"
 
 jobs:
-  deploy-frontend:
+  deploy-backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,10 +35,12 @@ jobs:
           cd ./backend
           zip -r ../lambda_function.zip .
           echo "@@ 3. 업로드된 source 압축 완료! "
+          pwd
+          find / -name "lambda_function.zip" 2>/dev/null
 
-      - name: 4. s3버킷으로 웹 소스 동기화
-        # 처음에 | 써주면 여러줄 쓰기 가능
-        run: |
-          echo "@@@ 4. s3 배포를 시작합니다..... "
-          aws s3 sync ./lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
-          echo "@@@ 4. s3 배포를 마쳤습니다!! "
+      # - name: 4. s3버킷으로 웹 소스 동기화
+      #   # 처음에 | 써주면 여러줄 쓰기 가능
+      #   run: |
+      #     echo "@@@ 4. s3 배포를 시작합니다..... "
+      #     aws s3 sync ./lambda_function.zip s3://aws-saa-qbank.was-cicd/lambda_function.zip  --delete
+      #     echo "@@@ 4. s3 배포를 마쳤습니다!! "
