@@ -1,5 +1,6 @@
 import json
 import os
+import boto3        # ssm 사용을 위해 aws sdk 추가
 import sqlite3
 import hashlib
 from datetime import datetime
@@ -11,11 +12,25 @@ IS_SQLITE = True
 def get_db_connection():
     global IS_SQLITE
     
+    # 람다 실행환경에 등록된 환경변수를 가져옴. 
     db_host = os.environ.get('DB_HOST')
     db_user = os.environ.get('DB_USER')
     db_password = os.environ.get('DB_PASSWORD')
     db_name = os.environ.get('DB_NAME')
     
+    # 보안 강화를 위해 SSM Parameter Store 경로(키)가 제공되면 패스워드를 SSM에서 직접 조회하여 덮어씌웁니다.
+    db_password_ssm_key = os.environ.get('DB_PASSWORD_SSM_KEY')
+    if db_password_ssm_key:
+        try:
+            # 람다가 돌고 있는 기본 AWS 리전을 환경변수로부터 가져오거나, 없으면 기본 리전으로 지정합니다.
+            aws_region = os.environ.get('AWS_REGION', 'ap-northeast-3')
+            ssm = boto3.client('ssm', region_name=aws_region)
+            # WithDecryption=True 옵션을 주어 SecureString 타입 파라미터를 복호화하여 가져옵니다.
+            response = ssm.get_parameter(Name=db_password_ssm_key, WithDecryption=True)
+            db_password = response['Parameter']['Value']
+        except Exception as e:
+            print(f"Failed to fetch password from SSM ({db_password_ssm_key}): {e}")
+            
     if db_host and db_user and db_password and db_name:
         try:
             import pymysql
