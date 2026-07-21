@@ -39,6 +39,6 @@ jobs:
                   ls -la
 
                   # conf 폴더 안의 특정 api.conf 파일만 S3의 해당 경로로 복사
-                  aws s3 cp conf/nginx/api.conf s3://aws-saa-qbank.conf-cicd/nginx/api.conf
+                  aws s3 cp conf/api.conf s3://aws-saa-qbank.conf-cicd/nginx/api.conf
 
                   echo "@@@ 3. s3 배포를 마쳤습니다!! "
