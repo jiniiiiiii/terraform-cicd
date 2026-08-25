@@ -6,7 +6,7 @@ on:
     branches:
       - dev
     paths: # grafana 폴더 밑의 파일이 변경되었을 때만 작동
-      - "grafana/**"
+      - "dashboard/**"
 
 jobs:
   deploy-dashboard:
@@ -27,5 +27,5 @@ jobs:
         run: |
           echo "@@@ S3 배포를 시작합니다..... "
           # 로컬의 grafana 폴더의 내용을 S3 버킷으로 동기화합니다.
-          aws s3 sync ./grafana/ s3://terraform-project-config/dashboard-json/ --delete
+          aws s3 sync ./dashboard/ s3://terraform-project-config/dashboard-json/ --delete
           echo "@@@ S3 배포를 완료했습니다! @@@"
