@@ -1,0 +1,31 @@
+# 0825 그라파나 대시보드 자동 업로드
+name: grafana-dashboard-cicd
+
+on:
+  push:
+    branches:
+      - dev
+    paths: # grafana 폴더 밑의 파일이 변경되었을 때만 작동
+      - "grafana/**"
+
+jobs:
+  deploy-dashboard:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 소스코드 체크아웃
+        uses: actions/checkout@v4
+
+      - name: 2. AWS 로그인
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-3 # 사용 중인 리전
+
+      - name: 3. S3 버킷으로 그라파나 대시보드 파일 동기화
+        run: |
+          echo "@@@ S3 배포를 시작합니다..... "
+          # 로컬의 grafana 폴더의 내용을 S3 버킷으로 동기화합니다.
+          aws s3 sync ./grafana/ s3://terraform-project-config/dashboard-json/ --delete
+          echo "@@@ S3 배포를 완료했습니다! @@@"

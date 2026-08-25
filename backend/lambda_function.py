@@ -147,6 +147,8 @@ def build_response(status_code, body):
     }
 
 def lambda_handler(event, context):
+    #debugging
+    #print(json.dumps(event, indent=2))
     # Initialize the database table
     try:
         init_db()

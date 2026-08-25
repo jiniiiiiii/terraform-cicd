@@ -1,0 +1,8 @@
+{
+  "path": "/api/signup",
+  "httpMethod": "POST",
+  "body": {
+    "email": "test@test.com",
+    "password": "test1234"
+  }
+}
