@@ -2,11 +2,13 @@
 name: was-cicd
 
 on:
+  workflow_dispatch: # Actions 탭에서 수동 실행(Run workflow) 가능하도록 추가
   push:
     branches:
       - dev
     paths: #특정 경로명이 올라왔을 때만 동작
       - "backend/**"
+
 
 jobs:
   deploy-backend:
